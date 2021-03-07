@@ -25,7 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class BlockSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Block
-		fields = ('id', 'blocker', 'blocked')
+		fields = '__all__'
 
 #Message Serializer
 class MessageSerializer(serializers.ModelSerializer):

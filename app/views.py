@@ -48,18 +48,22 @@ class LoginAPI(KnoxLoginView):
 
 class messages(views.APIView):
     def post(self, request, format=None):
-        many = True if isinstance(request.data, list) else False        
-        request.data["sender"] = User.objects.filter(username=request.data["sender_name"]).first().id
-        request.data["receiver"] = User.objects.filter(username=request.data["receiver_name"]).first().id
-        serializer = MessageSerializer(data=request.data, many=many)
-        if serializer.is_valid():
-            is_block = Block.objects.filter(blocker=serializer.validated_data["receiver"], blocked=serializer.validated_data["sender"])
-            if is_block.exists():
-                return Response("blocked user!", status=status.HTTP_201_CREATED)
-            else:
-                serializer.save() 
-            return Response("message created", status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            many = True if isinstance(request.data, list) else False  
+            setattr(request.data, '_mutable', True)      
+            request.data["sender"] = User.objects.filter(username=request.data["sender_name"]).first().id
+            request.data["receiver"] = User.objects.filter(username=request.data["receiver_name"]).first().id
+            serializer = MessageSerializer(data=request.data, many=many)
+            if serializer.is_valid():
+                is_block = Block.objects.filter(blocker=serializer.validated_data["receiver"], blocked=serializer.validated_data["sender"])
+                if is_block.exists():
+                    return Response("blocked user!", status=status.HTTP_200_OK)
+                else:
+                    serializer.save() 
+                return Response("message created", status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response("message creation failed", status=status.HTTP_400_BAD_REQUEST)
     def get(self, request, format=None):
         messages = Message.objects.all()
         serializer = MessageSerializer(messages, many=True)
@@ -68,6 +72,7 @@ class messages(views.APIView):
 class blocks(views.APIView):
     def post(self, request, format=None):
         many = True if isinstance(request.data, list) else False
+        setattr(request.data, '_mutable', True)
         request.data["blocker"] = User.objects.filter(username=request.data["blocker_name"]).first().id
         request.data["blocked"] = User.objects.filter(username=request.data["blocked_name"]).first().id
         serializer = BlockSerializer(data=request.data, many=many)
