@@ -24,6 +24,7 @@ urlpatterns = [
     re_path(r'^register/', app.views.RegisterAPI.as_view(), name='register'),
     re_path(r'^message/', app.views.messages.as_view(), name='message'),
     re_path(r'^block/', app.views.blocks.as_view(), name='block'),
+    re_path(r'^log/', app.views.logs.as_view(), name='log'),
     re_path(r'^login/', app.views.LoginAPI.as_view(), name='login'),
     re_path(r'^logout/', knox_views.LogoutView.as_view(), name='logout'),
     re_path(r'^logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),

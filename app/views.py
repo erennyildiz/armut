@@ -84,3 +84,10 @@ class blocks(views.APIView):
         blocks = Block.objects.all()
         serializer = BlockSerializer(blocks, many=True)
         return Response(serializer.data)
+
+class logs(views.APIView):
+    def get(self, request, format=None):
+        logs = Log.objects.all()
+        serializer = LogSerializer(logs, many=True)
+        return Response(serializer.data)
+        
